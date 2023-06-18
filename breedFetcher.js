@@ -14,6 +14,11 @@
  * It's called TheCatAPI and their slogan is awesome: "Cats as a Service,
  * Everyday is Caturday."
  *
+ * Website: https://thecatapi.com/
+ * API Docs: https://github.com/lighthouse-labs/cats-api/blob/main/README.md
+ * Cat Breed Search API: https://api.thecatapi.com/v1/breeds/search?q=Breed-Name
+ * (You can paste the last link into the browser an get back a JSON file.)
+ *
  * The best part is that it's free, and there's no cat-ch!
  *
  *
@@ -45,3 +50,26 @@
 const request = require("request");
 
 
+// GLOBAL STATE
+// This is a URL offered by TheCatAPI. Specifically, it corresponds to
+// to this API `GET /breeds/search`. This API lets you search this website's
+// Cat Breed database. It returns data in JSON format.
+const APIUrl = "https://api.thecatapi.com/v1/breeds/search?q=";
+
+
+
+// This function creates the final API search string, puts out a request to the
+// TheCatAPI and retrieves cat breed information, and logs it to the console.
+const retrieveCatBreedData = function() {
+
+  // CAPTURE AND SORT CLI INPUT
+  // The user must enter the breed name as a CLI argument (to search for it).
+  const breedName = process.argv[2];
+  // Concatenate the API URL and the user-entered breed name in order to create
+  // an API search string.
+  const finalURL = APIUrl.concat(breedName);
+
+};
+
+
+retrieveCatBreedData();
