@@ -69,6 +69,23 @@ const retrieveCatBreedData = function() {
   // an API search string.
   const finalURL = APIUrl.concat(breedName);
 
+
+
+  // CALLBACK 1: INVOKE THE REQUEST FUNCTION
+  request(finalURL, (requestError, response, body) => {
+
+    // Error Handling: Print the error(s) if one occurred.
+    if (requestError === true) {
+      console.log(`request() Error: ${requestError}`);
+
+      // If the request goes through...
+    } else {
+
+
+    }
+
+  });
+
 };
 
 
