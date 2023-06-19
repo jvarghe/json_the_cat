@@ -1,83 +1,43 @@
-/* M02 W05 CHALLENGE: CATS AS A SERVICE
+/* THE `fetchBreedDescription()` FUNCTION
  *
- * We didn't get to spend enough time with cats, don't you think?
+ * This function encapsulates the `request()` function that fetches data from
+ * the internet. As the function is async it cannot be standalone (why?). It
+ * takes two arguments, `breedName` and `callback`.
  *
- * The last time we talked about cats, we learned how to use `fs` to read cat
- * breed information from text files stored on our local drive. The real goal
- * there wasn't to learn about cat breeds. It was about exploring the async
- * nature of Node, especially when dealing with I/O (input and output) of data.
- *
- * We had a very limited data set though, didn't we? Just two cat breeds! And
- * our information could also be outdated. Luckily, there's an HTTP API that
- * provides more extensive JSON data about Cats!
- *
- * It's called TheCatAPI and their slogan is awesome: "Cats as a Service,
- * Everyday is Caturday."
- *
- * Website: https://thecatapi.com/
- * API Docs: https://github.com/lighthouse-labs/cats-api/blob/main/README.md
- * Cat Breed Search API: https://api.thecatapi.com/v1/breeds/search?q=Breed-Name
- * (You can paste the last link into the browser an get back a JSON file.)
- *
- * The best part is that it's free, and there's no cat-ch!
- *
- *
- * THE `request` LIBRARY
- *
- * We'll be using the request library again, which we recently played with by
- * building a cool little Page Downloader. Our page downloader fetched HTML
- * content.
- *
- * HTML is not raw data. It's meant for displaying content in a browser. We
- * want raw data and JSON is great for that. We haven't yet used a JSON API to
- * fetch raw, structured data. This exercise will let us practice just that!
- *
- *
- * BREED DETAILS FETCHER
- *
- * As a proof of concept, let's build a command line app that makes it "easy"
- * for users to query this dataset from the terminal. Users can provide any
- * breed name, causing our application to fetch the information from the API
- * and print out a short description of that breed.
- *
- * Note: Warning! The documentation for TheCatAPI mentions that an API key is
- * required for deeper integration. However, we are using the API very lightly
- * and will not need to bother using an API Key.
+ * It uses the callback to return data back to `index.js`. The callback can
+ * return either the data or an error, which means that you must return `null`
+ * for the other value, as shown below.
  */
-
 
 // IMPORTS
 const request = require("request");
 
 
-// GLOBAL STATE
-// This is a URL offered by TheCatAPI. Specifically, it corresponds to
-// to this API `GET /breeds/search`. This API lets you search this website's
-// Cat Breed database. It returns data in JSON format.
-const APIUrl = "https://api.thecatapi.com/v1/breeds/search?q=";
-
-
 
 // This function creates the final API search string, puts out a request to the
 // TheCatAPI and retrieves cat breed information, and logs it to the console.
-const retrieveCatBreedData = function() {
+const fetchBreedDescription = function(breedName, callback) {
 
-  // CAPTURE AND SORT CLI INPUT
-  // The user must enter the breed name as a CLI argument (to search for it).
-  // For breeds with multi-word names, use the `+` symbol to separate words.
-  const breedName = process.argv[2];
+
+  // This is a URL offered by TheCatAPI. Specifically, it corresponds to
+  // to this API `GET /breeds/search`. This API lets you search this website's
+  // Cat Breed database. It returns data in JSON format.
   // Concatenate the API URL and the user-entered breed name in order to create
   // an API search string.
-  const finalURL = APIUrl.concat(breedName);
+  const apiURL = `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`;
 
 
+  // CALLBACK: INVOKE THE REQUEST FUNCTION
+  request(apiURL, (error, response, body) => {
 
-  // CALLBACK 1: INVOKE THE REQUEST FUNCTION
-  request(finalURL, (requestError, response, body) => {
+    // Error Handling: Invoke the callback and return the error.
+    // Note: `if(error === true)` DOES NOT WORK. You must use `if (error)`.
+    // Figure out why.
+    if (error) {
 
-    // Error Handling: Print the error(s) if one occurred.
-    if (requestError === true) {
-      console.log(`request() Error: ${requestError}`);
+      // If the request returns an error, invoke the callback and return the
+      // `error` object and null for the `description` parameter.
+      callback(error, null);
 
       // If the request goes through...
     } else {
@@ -87,7 +47,7 @@ const retrieveCatBreedData = function() {
       // console.log(body);
 
       // Log its type to console (String)
-      // console.log(`Type of body: ${typeof body}`);
+      // console.log(`Type of Body Section: ${body}`);
 
       // Parse the JSON string into a JavaScript object and log it to console.
       const breedDataObj = JSON.parse(body);
@@ -96,8 +56,13 @@ const retrieveCatBreedData = function() {
       // Now that the JSON string has been converted into a JS Object, note
       // that it appears in the format of an array, which in turn has a single
       // element: the JSON object containing the data about the cat breed.
-      // Print out the breed's description:
-      console.log(`${breedName} Breed Description: ${breedDataObj[0].description}`);
+      // Return the breed's description:
+      const breedDescription = breedDataObj[0].description;
+
+      // If the request is successful, find the required data from the response,
+      // and return null for the `error` and the data for `description`.
+      callback(null, breedDescription);
+
     }
 
   });
@@ -105,4 +70,6 @@ const retrieveCatBreedData = function() {
 };
 
 
-retrieveCatBreedData();
+
+// EXPORTS
+module.exports = { fetchBreedDescription };
