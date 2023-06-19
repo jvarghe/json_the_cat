@@ -64,6 +64,7 @@ const retrieveCatBreedData = function() {
 
   // CAPTURE AND SORT CLI INPUT
   // The user must enter the breed name as a CLI argument (to search for it).
+  // For breeds with multi-word names, use the `+` symbol to separate words.
   const breedName = process.argv[2];
   // Concatenate the API URL and the user-entered breed name in order to create
   // an API search string.
@@ -81,7 +82,22 @@ const retrieveCatBreedData = function() {
       // If the request goes through...
     } else {
 
+      // Log the returned resource (i.e. the body) to console so we can see
+      // what it looks like:
+      // console.log(body);
 
+      // Log its type to console (String)
+      // console.log(`Type of body: ${typeof body}`);
+
+      // Parse the JSON string into a JavaScript object and log it to console.
+      const breedDataObj = JSON.parse(body);
+      // console.log(breedDataObj);
+
+      // Now that the JSON string has been converted into a JS Object, note
+      // that it appears in the format of an array, which in turn has a single
+      // element: the JSON object containing the data about the cat breed.
+      // Print out the breed's description:
+      console.log(`${breedName} Breed Description: ${breedDataObj[0].description}`);
     }
 
   });
